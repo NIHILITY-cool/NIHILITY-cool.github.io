@@ -4192,6 +4192,7 @@ const againBtn = $("againBtn");
 const prevBtn = $("prevBtn");
 const nextBtn = $("nextBtn");
 const randomBtn = $("randomBtn");
+const nextArticleBtn = $("nextArticleBtn");
 const testTools = $("testTools");
 const memorizeBtn = $("memorizeBtn");
 const testBtn = $("testBtn");
@@ -4362,6 +4363,16 @@ function submitCurrent() {
 function retryCurrent() { resetState(); render(); }
 function againRandom() { pickRandomArticle(true); render(); }
 
+function nextArticleSequential() {
+  if (!DATA.length) return;
+  const next = (currentIndex + 1) % DATA.length;
+  currentIndex = next;
+  testHistory = testHistory.slice(0, historyPos + 1);
+  testHistory.push(currentIndex);
+  historyPos = testHistory.length - 1;
+  resetState();
+  render();
+}
 function render() {
   if (!DATA.length) return;
   renderHeader();
@@ -4378,6 +4389,7 @@ submitBtn.addEventListener("click", submitCurrent);
 retryBtn.addEventListener("click", retryCurrent);
 againBtn.addEventListener("click", againRandom);
 randomBtn.addEventListener("click", againRandom);
+nextArticleBtn.addEventListener("click", nextArticleSequential);
 document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft") moveArticle(-1);
   if (e.key === "ArrowRight") moveArticle(1);
