@@ -4192,7 +4192,6 @@ const againBtn = $("againBtn");
 const prevBtn = $("prevBtn");
 const nextBtn = $("nextBtn");
 const randomBtn = $("randomBtn");
-const nextArticleBtn = $("nextArticleBtn");
 const testTools = $("testTools");
 const memorizeBtn = $("memorizeBtn");
 const testBtn = $("testBtn");
@@ -4241,18 +4240,8 @@ function pickRandomArticle(forceDifferent = true) {
 }
 
 function moveArticle(delta) {
-  if (mode === "memorize") {
-    currentIndex = (currentIndex + delta + DATA.length) % DATA.length;
-    resetState();
-  } else {
-    if (delta < 0 && historyPos > 0) {
-      historyPos -= 1;
-      currentIndex = testHistory[historyPos];
-      resetState();
-    } else {
-      pickRandomArticle(true);
-    }
-  }
+  currentIndex = (currentIndex + delta + DATA.length) % DATA.length;
+  resetState();
   render();
 }
 
@@ -4261,9 +4250,7 @@ function renderHeader() {
   articleKicker.textContent = `${a.label}`;
   articleTitle.textContent = a.title;
   articleRange.textContent = a.range;
-  articleProgress.textContent = mode === "memorize"
-    ? `文章 ${currentIndex + 1} / ${DATA.length}`
-    : `随机自测 · 文章 ${currentIndex + 1} / ${DATA.length}`;
+  articleProgress.textContent = `文章 ${currentIndex + 1} / ${DATA.length}`;
   articleCount.textContent = `${a.questions.length} 题`;
   progressFill.style.width = `${((currentIndex + 1) / DATA.length) * 100}%`;
   testTools.classList.toggle("show", mode === "test");
@@ -4363,16 +4350,6 @@ function submitCurrent() {
 function retryCurrent() { resetState(); render(); }
 function againRandom() { pickRandomArticle(true); render(); }
 
-function nextArticleSequential() {
-  if (!DATA.length) return;
-  const next = (currentIndex + 1) % DATA.length;
-  currentIndex = next;
-  testHistory = testHistory.slice(0, historyPos + 1);
-  testHistory.push(currentIndex);
-  historyPos = testHistory.length - 1;
-  resetState();
-  render();
-}
 function render() {
   if (!DATA.length) return;
   renderHeader();
@@ -4389,7 +4366,6 @@ submitBtn.addEventListener("click", submitCurrent);
 retryBtn.addEventListener("click", retryCurrent);
 againBtn.addEventListener("click", againRandom);
 randomBtn.addEventListener("click", againRandom);
-nextArticleBtn.addEventListener("click", nextArticleSequential);
 document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft") moveArticle(-1);
   if (e.key === "ArrowRight") moveArticle(1);
